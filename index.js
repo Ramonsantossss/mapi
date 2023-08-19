@@ -6,12 +6,19 @@ const port = 8080;
 app.set("views", "./static/");
 app.use(express.static("./public/"))
 app.engine('html', require('ejs').renderFile);
+app.use(express.json());
+app.set("json spaces",2)
+
 
 app.get("/search/", (req, res) => {
-    const name = req.query.q;
-    api.search(name).then((response) => {
+const name = req.query.q;
+const test = require("./test.js")
+//var return_data = { "mangas": [] };
+//    const form = "search=" + name;
+api.search(name).then((response) => {
         res.send(response);
     });
+
 });
 
 app.get("/chapters/:id/", async (req, res) => {
@@ -99,14 +106,14 @@ app.get("/popular/", async (_req, res) => {
 app.get("/popular/:page", (req, res) => {
     const page = req.params.page;
     api.getPopular(page).then((response) => {
-        res.send(response);
+        res.send(response.mangas);
     });
 });
 
 app.get("/top/:page", (req, res) => {
     const page = req.params.page;
     api.getTop(page).then((response) => {
-        res.send(response);
+        res.send(response.mangas);
     });
 });
 
