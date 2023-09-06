@@ -2,7 +2,9 @@ const express = require('express');
 const api = require("./api");
 const app = express();
 const port = 8080;
+const cors = require('cors');
 
+app.use(cors());
 app.set("views", "./static/");
 app.use(express.static("./public/"))
 app.engine('html', require('ejs').renderFile);
@@ -10,7 +12,15 @@ app.use(express.json());
 app.set("json spaces",2)
 
 
-app.get("/search/", (req, res) => {
+
+
+// Defina as rotas da sua API
+app.get('/rota', (req, res) => {
+  // Lógica da rota aqui
+  res.json({ message: 'Sua API está funcionando!' });
+});
+
+app.get("/search", (req, res) => {
 const name = req.query.q;
 const test = require("./test.js")
 //var return_data = { "mangas": [] };
