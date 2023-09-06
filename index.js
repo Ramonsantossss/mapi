@@ -1,5 +1,6 @@
 const express = require('express');
 const api = require("./api");
+const test = require('./test')
 const app = express();
 const port = 8080;
 
@@ -131,7 +132,7 @@ app.get("/top/", async (_req, res) => {
 
 app.get("/manga/:id", async(req, res) => {
     const id = req.params.id;
-    api.getMangaById(id).then((response) => {
+    test.getMangaById(id).then((response) => {
         res.send(response);
     });
 });
