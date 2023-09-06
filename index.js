@@ -132,7 +132,7 @@ app.get("/top/", async (_req, res) => {
 
 app.get("/manga/:id", async(req, res) => {
     const id = req.params.id;
-    test.getMangaById(id).then((response) => {
+    api.getMangaById(id).then((response) => {
         res.send(response);
     });
 });
