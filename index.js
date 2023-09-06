@@ -3,6 +3,35 @@ const api = require("./api");
 const test = require('./test')
 const app = express();
 const port = 8080;
+const axios = require("axios");
+const cheerio = require("cheerio"); 
+
+function getMangaById(name, id) {
+    var return_data;
+    const nick = name;
+    let bay; // Declare a variável 'bay' aqui
+    return (async () => {
+        try {
+            let response = await axios.get("https://mangalivre.net/manga/"+name+"/"+id);
+            bay = response.data;
+            const $ = cheerio.load(bay);
+          //  console.log(response.data)
+            const descriptionContent = $('meta[name="description"]').attr("content");
+            const foto = $('meta[property="og:image"]').attr("content");
+            const groups = [];
+            $('ul.scans-list li').each((index, element) => {
+            const priority = $(element).find('h2.priority').text();
+            const scanlator = $(element).find('span.separator').next().text();
+            const chapters = $(element).find('span.chapters').text().trim();
+    groups.push({ priority, scanlator, chapters });
+            });
+            const result = {"nome": name, "id": id, "desc": descriptionContent, "foto": foto}
+            return result;
+        } catch (error) {
+            console.error(error.message);
+        }
+    })();
+}
 
 app.set("views", "./static/");
 app.use(express.static("./public/"))
@@ -133,7 +162,7 @@ app.get("/top/", async (_req, res) => {
 app.get("/manga/:name/:id", async(req, res) => {
     const name = req.params.name
     const id = req.params.id;
-    api.getMangaById(name, id).then((response) => {
+    getMangaById(ab, aa).then((response) => {
         res.send(response);
     });
 });
