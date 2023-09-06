@@ -54,27 +54,28 @@ function parseResults(html) {
 }
 
 
-function search(name) {
+//const got = require('got');
+
+async function search(name) {
     var return_data = { "mangas": [] };
     const form = "search=" + name;
-    
-    return (async () => {
-        try {
-            let response = await got.post(
-                "https://mangalivre.net/lib/search/series.json", {
-                body: form,
-                headers: {
-                    "x-requested-with": "XMLHttpRequest",
-                    "content-type": "application/x-www-form-urlencoded",
-                },
-            });
 
-            // nenhum resultado
-            if (!JSON.parse(response.body).series){
-                return return_data;
-            }
+    try {
+        let response = await got.post(
+            "https://mangalivre.net/lib/search/series.json", {
+            body: form,
+            headers: {
+                "x-requested-with": "XMLHttpRequest",
+                "content-type": "application/x-www-form-urlencoded",
+            },
+        });
 
-            for (let serie of JSON.parse(response.body).series) {
+        // Convertendo a resposta para JSON
+        const responseData = JSON.parse(response.body);
+
+        // Verificando se a chave 'series' existe na resposta
+        if (responseData.series) {
+            for (let serie of responseData.series) {
                 return_data.mangas.push({
                     "id_serie": serie.id_serie,
                     "name": serie.name,
@@ -87,13 +88,16 @@ function search(name) {
                     "categories": serie.categories.map((categorie) => { return { "name": categorie.name, "id_category": categorie.id_category }; }),
                 });
             }
-
-            return return_data;
-        } catch (error) {
-            console.log(error.message);
         }
-    })();
+
+        return return_data;
+    } catch (error) {
+        console.log(error.message);
+    }
 }
+
+
+
 
 
 function getChapters(id, page) {
@@ -235,12 +239,12 @@ function getTop(page) {
     })();
 }
 
-function getMangaById(id) {
+function getMangaById(name, id) {
     var return_data  = {"manga": {}};
     
     return (async () => {
         try {
-            let response = await got("https://mangalivre.net/manga/"+id);
+            let response = await got("https://mangalivre.net/manga/"+name+"/"+id);
             return_data.manga = parseManga(response.body, nick, id);
         } catch (error) {
             console.error(error.message);
@@ -248,6 +252,11 @@ function getMangaById(id) {
         return return_data;
     })();
 }
+
+function genero(id) {
+
+}
+
 
 module.exports = {
     search: search,
@@ -258,4 +267,5 @@ module.exports = {
     getPopular: getPopular,
     getTop: getTop,
     getMangaById: getMangaById,
+    genero: genero,
 }
