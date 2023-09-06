@@ -2,9 +2,9 @@ const express = require('express');
 const api = require("./api");
 const app = express();
 const port = 8080;
-const cors = require('cors');
+//const cors = require('cors');
 
-app.use(cors());
+//app.use(cors());
 app.set("views", "./static/");
 app.use(express.static("./public/"))
 app.engine('html', require('ejs').renderFile);
