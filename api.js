@@ -111,8 +111,9 @@ function getChapters(id, page) {
                     "content-type": "application/x-www-form-urlencoded",
                 },
             });
-
+            
             response = JSON.parse(response.body);
+            console.log(response)
             if (response.chapters) {
                 return_data.id_serie = response.chapters[0].id_serie;
                 return_data.url_name = response.chapters[0].releases[Object.keys(response.chapters[0].releases)[0]].link.match(/(?<=ler\/).*?(?=\/)/)[0];
@@ -142,6 +143,7 @@ async function getPages(release_id) {
     const identifier = await (async () => {
         try {
             let response = await got(`https://mangalivre.net/ler/null/online/${release_id}/capitulo-0/`);
+            console.log(response)
             return_data.chapter_number = response.body.match(/(?<=var number = ").*(?=";)/gm)[0].trim();
             let chapters = JSON.parse(response.body.match(/(?<=chapters = ).*?(?=;)/gm)[0].trim()).reverse();
             for (const chapter of chapters) {
@@ -239,19 +241,32 @@ function getTop(page) {
     })();
 }
 
-function getMangaById(name, id) {
-    var return_data  = {"manga": {}};
+//const got = require('got'); // Importe a biblioteca 'got'
+
+async function getMangaById(name, id) {
+  try {
+    const response = await got(`https://mangalivre.net/manga/${name}/${id}`);
+    const bay = response.body;
+
+    const descriptionMatch = /<meta\sname="description"\scontent="([^"]+)"/.exec(bay);
+    const fotoMatch = /<meta\sproperty="og:image"\scontent="([^"]+)"/.exec(bay);
+
+    const descriptionContent = descriptionMatch ? descriptionMatch[1] : '';
+    const foto = fotoMatch ? fotoMatch[1] : '';
     
-    return (async () => {
-        try {
-            let response = await got("https://mangalivre.net/manga/"+name+"/"+id);
-            return_data.manga = parseManga(response.body, nick, id);
-        } catch (error) {
-            console.error(error.message);
-        }
-        return return_data;
-    })();
+    const result = {
+      "nome": name,
+      "id": id,
+      "desc": descriptionContent,
+      "foto": foto
+    };
+
+    return result;
+  } catch (error) {
+    console.error(error.message);
+  }
 }
+
 
 function genero(id) {
 
