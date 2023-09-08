@@ -245,7 +245,7 @@ function getMangaById(name, id) {
     return (async () => {
         try {
             let response = await got("https://mangalivre.net/manga/"+name+"/"+id);
-            return_data.manga = parseManga(response.body);
+            return_data.manga = parseManga(response.body, nick, id);
         } catch (error) {
             console.error(error.message);
         }
