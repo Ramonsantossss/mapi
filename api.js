@@ -28,9 +28,10 @@ function parseResults(html) {
     html = html.replace(/(\r\n|\n|\r)/gm, "");
     
     // li tags
-    let lis = html.match(new RegExp('<li> *<a href="\/manga\/.*?\<\/div\>\ *<\/a\>\ *<\/li>', "gm"));
+let lis = html.match(new RegExp('<li> *<a href="\/manga\/.*?\<\/div\>\ *<\/a\>\ *<\/li>', "gm")) || [];
 
-    for (let li of lis) {
+for (let li of lis) {
+    // Resto do seu código aqui
         let manga = {};
         
         manga.name = li.match(/(?<=series-title......).*?(?=<\/h1>)/gm)[0].trim();
@@ -111,9 +112,9 @@ function getChapters(id, page) {
                     "content-type": "application/x-www-form-urlencoded",
                 },
             });
-            
-            response = JSON.parse(response.body);
             console.log(response)
+            response = JSON.parse(response.body);
+            
             if (response.chapters) {
                 return_data.id_serie = response.chapters[0].id_serie;
                 return_data.url_name = response.chapters[0].releases[Object.keys(response.chapters[0].releases)[0]].link.match(/(?<=ler\/).*?(?=\/)/)[0];
